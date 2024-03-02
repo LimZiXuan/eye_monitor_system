@@ -1,4 +1,7 @@
+import 'package:eye_monitor_system/add_reminder.dart';
 import 'package:eye_monitor_system/home_page.dart';
+import 'package:eye_monitor_system/reminder.dart';
+import 'package:eye_monitor_system/test_history.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; // new
 
@@ -59,13 +62,13 @@ class _HomeState extends State<Home> {
       builder: (context, appState, _) => HomePage(),
     ),
     Consumer<ApplicationState>(
-      builder: (context, appState, _) => const HomePage(),
+      builder: (context, appState, _) => const AddReminder(),
     ),
     Consumer<ApplicationState>(
-      builder: (context, appState, _) => const HomePage(),
+      builder: (context, appState, _) => const Reminder(),
     ),
     Consumer<ApplicationState>(
-      builder: (context, appState, _) => HomePage(),
+      builder: (context, appState, _) => TestHistory(),
     ),
   ];
   @override

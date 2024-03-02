@@ -69,6 +69,7 @@ flutter:
       - assets/img/img1.png
       - assets/img/img2.png
       - assets/img/img3.png
+      - assets/img/Snellen_chart.svg.webp
 
   # To add assets to your application, add an assets section, like this:
   # assets:
