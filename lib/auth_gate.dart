@@ -1,50 +1,34 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../home.dart';
 
 class AuthGate extends StatelessWidget {
   AuthGate({Key? key}) : super(key: key);
 
-  Future<void> signInAnonymously(BuildContext context) async {
-    try {
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInAnonymously();
-      print(userCredential);
-      // Sign-in was successful, navigate to the HomePage
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const Home(selectedIndex: 0)),
-      );
-    } on FirebaseAuthException catch (e) {
-      switch (e.code) {
-        case "operation-not-allowed":
-          print("Anonymous auth hasn't been enabled for this project.");
-          break;
-        default:
-          print("Unknown error.");
-      }
-    }
-  }
-
-  // Future<bool> checkIsAdmin() async {
-  //   final User? user = FirebaseAuth.instance.currentUser;
-  //   final DocumentSnapshot userDoc = await FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(user!.uid)
-  //       .get();
-  //   return userDoc.get('isAdmin');
-  // }
-
-  // bool isAdmin = false;
-  // Future<void> checkAdmin() async {
-  //   isAdmin = await checkIsAdmin();
-  // }
-
   @override
   Widget build(BuildContext context) {
+//     return Home(selectedIndex: 0);
+//     // StreamBuilder<User?>(
+//     //   stream: FirebaseAuth.instance.authStateChanges(),
+//     //   // If the user is already signed-in, use it as initial data
+//     //   initialData: FirebaseAuth.instance.currentUser,
+//     //   builder: (context, snapshot) {
+//     //     // User is not signed in
+//     //     if (!snapshot.hasData) {
+//     //       return SignInScreen(
+//     //         providerConfigs: [
+//     //           EmailProviderConfiguration(),
+//     //         ],
+//     //       );
+//     //     }
+//     //     return Home(selectedIndex: 0);
+//     //   },
+//     // );
+//   }
+// }
     return Scaffold(
         body: StreamBuilder<User?>(
             stream: FirebaseAuth.instance.authStateChanges(),
@@ -111,12 +95,12 @@ class AuthGate extends StatelessWidget {
                     return Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          TextButton(
-                            onPressed: () {
-                              signInAnonymously(context);
-                            },
-                            child: Text("Sign In Anonymously"),
-                          ),
+                          // TextButton(
+                          //   onPressed: () {
+                          //     signInAnonymously(context);
+                          //   },
+                          //   child: Text("Sign In Anonymously"),
+                          // ),
                           Padding(
                             padding: EdgeInsets.only(top: 16),
                             child: Text(
