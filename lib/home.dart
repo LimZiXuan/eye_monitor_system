@@ -89,7 +89,7 @@ class _HomeState extends State<Home> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.add),
-            label: 'News',
+            label: 'Add',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_month),

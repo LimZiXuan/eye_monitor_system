@@ -14,73 +14,80 @@ class _HomePageState extends State<HomePage> {
       body: SingleChildScrollView(
           child: Column(children: <Widget>[
         AppBar(
+          title: Text("Home"),
+          centerTitle: true,
           leading: Builder(
             builder: (BuildContext context) {
               return IconButton(
-                icon: const Icon(Icons.calendar_month),
-                onPressed: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //       builder: (context) => TableEventsExample()),
-                  // );
-                },
+                icon: const Icon(Icons.menu),
+                onPressed: () {},
                 tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
               );
             },
           ),
-          // actions: [
-          //   IconButton(
-          //     icon: const FaIcon(FontAwesomeIcons.book),
-          //     onPressed: () {
-          //       Navigator.push(
-          //         context,
-          //         MaterialPageRoute(builder: (context) => FieldGuide()),
-          //       );
-          //     },
-          //   )
-          // ],
         ),
         const SizedBox(height: 8),
-        // ClipRRect(
-        //   borderRadius: BorderRadius.circular(100.0),
-        //   child: Image.asset(
-        //     'assets/img/Bird1.jpg',
-        //     fit: BoxFit.contain,
-        //     // height: 600.0,
-        //     //width: 400.0,
-        //   ),
-        // ),
+        Container(
+          width: MediaQuery.of(context).size.width * 0.6,
+          margin: EdgeInsets.symmetric(horizontal: 8),
+          decoration: BoxDecoration(
+            color: Colors.blue[100],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                "Good Day, Would you like to give your eyes your check?",
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          height: MediaQuery.of(context).size.height * 0.6,
+          width: MediaQuery.of(context).size.width * 0.9,
+          margin: EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            color: Colors.grey[300],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    "Test 1",
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    "Test 2",
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    "Test 3",
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                //add buttons here
-                TextButton.icon(
-                  onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //       builder: (context) => ImageClassification()),
-                    // );
-                  },
-                  icon: const Icon(Icons.camera_alt_outlined),
-                  label: const Text('Image ID'),
-                ),
-                // TextButton.icon(
-                //   onPressed: () {
-                //     // Navigator.push(
-                //     //   context,
-                //     //   MaterialPageRoute(
-                //     //       builder: (context) =>
-                //     //           CharacteristicIdentification()),
-                //     // );
-                //   },
-                //   //icon: const FaIcon(FontAwesomeIcons.featherPointed),
-                //   label: const Text("Characteristics ID"),
-                // ),
-              ]),
+              children: <Widget>[]),
         )
       ])),
     );
