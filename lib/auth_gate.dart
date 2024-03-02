@@ -5,13 +5,30 @@ import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../home.dart';
 import 'register.dart';
+import 'login.dart';
 
 class AuthGate extends StatelessWidget {
   AuthGate({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Home(selectedIndex: 0);
+    return Scaffold(
+      body: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          }
+          if (snapshot.hasData) {
+            return const Home(selectedIndex: 0);
+          }
+          return LoginPage();
+        },
+      ),
+    );
+  }
+}
+    //return Home(selectedIndex: 0);
     // StreamBuilder<User?>(
     //   stream: FirebaseAuth.instance.authStateChanges(),
     //   // If the user is already signed-in, use it as initial data
@@ -28,8 +45,8 @@ class AuthGate extends StatelessWidget {
     //     return Home(selectedIndex: 0);
     //   },
     // );
-  }
-}
+  //}
+//}
 //     return Scaffold(
 //         body: StreamBuilder<User?>(
 //             stream: FirebaseAuth.instance.authStateChanges(),

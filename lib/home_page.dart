@@ -1,4 +1,11 @@
+import 'package:eye_monitor_system/app.dart';
+import 'package:eye_monitor_system/eye_training.dart';
+import 'package:eye_monitor_system/long_short_sightedness.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import 'auth_gate.dart';
+import 'color_blind_test.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -20,7 +27,57 @@ class _HomePageState extends State<HomePage> {
             builder: (BuildContext context) {
               return IconButton(
                 icon: const Icon(Icons.menu),
-                onPressed: () {},
+                onPressed: () async {
+                  showDialog(
+                    //show a dialog box to confirm sign out
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Sign Out'),
+                      content: const Text('Are you sure you want to sign out?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            // Sign out the user and navigate to the authentication screen
+                            try {
+                              await FirebaseAuth.instance.signOut();
+                              // Navigator.of(context).pushAndRemoveUntil(
+                              //     MaterialPageRoute(
+                              //         builder: (_) => MultiProvider(providers: [
+                              //               ChangeNotifierProvider(
+                              //                   create: (context) =>
+                              //                       ApplicationState()),
+                              //             ], child: AuthGate())),
+                              //     (route) => false);
+                              navigatorKey.currentState?.pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (context) => AuthGate()),
+                                (route) => false,
+                              );
+                              //Navigator.of(context).pop();
+                              // Navigator.of(
+                              //   context,
+                              // ).pushAndRemoveUntil(
+                              //     MaterialPageRoute(
+                              //         builder: (context) => AuthGate()),
+                              //     (route) => false);
+                            } catch (e) {
+                              print('Error signing out: $e');
+                              // Handle the error gracefully, e.g., show an error message
+                            }
+                          },
+                          child: const Text('Sign Out'),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                // onPressed: () {
+
+                // },
                 tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
               );
             },
@@ -58,27 +115,38 @@ class _HomePageState extends State<HomePage> {
             borderRadius: BorderRadius.circular(12),
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    "Test 1",
-                    style: TextStyle(fontSize: 18),
+                InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ColorBlindTest()));
+                    },
+                    child: _buildTestItem(
+                      imagePath: 'assets/img/download.png',
+                      text: 'Colour Blind Test',
+                    )),
+                InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LongShortSightedness()));
+                    },
+                    child: _buildTestItem(
+                      imagePath: 'assets/img/sight.png',
+                      text: 'Long Short Sightedness',
+                    )),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => EyeTraining()));
+                  },
+                  child: _buildTestItem(
+                    imagePath: 'assets/img/eye_training.png',
+                    text: 'Eye Training',
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    "Test 2",
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    "Test 3",
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ),
+                )
               ],
             ),
           ),
@@ -90,6 +158,26 @@ class _HomePageState extends State<HomePage> {
               children: <Widget>[]),
         )
       ])),
+    );
+  }
+
+  Widget _buildTestItem({required String imagePath, required String text}) {
+    return Column(
+      children: [
+        Image.asset(
+          imagePath,
+          width: 100,
+          height: 100,
+          fit: BoxFit.cover,
+        ),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            text,
+            style: TextStyle(fontSize: 18),
+          ),
+        ),
+      ],
     );
   }
 }
