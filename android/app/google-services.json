@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "153982548433",
+    "project_id": "eye-monitor-system-59f0f",
+    "storage_bucket": "eye-monitor-system-59f0f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:153982548433:android:51dd8aeb12c28a4b7dc8f0",
+        "android_client_info": {
+          "package_name": "com.example.eye_monitor_system"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXgqz3MN3G_FR1TYfxE3TZnwboUlVb304"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
