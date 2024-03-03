@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Reminder extends StatefulWidget {
   const Reminder({Key? key}) : super(key: key);
@@ -15,50 +16,40 @@ class _ReminderState extends State<Reminder> {
         title: Text("Reminder"),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ListTile(
-                title: Text("Reminder 1"),
-                subtitle: Text("10:00 AM"),
-                trailing: IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () {
-                    Navigator.pushNamed(context, "/addReminder");
-                  },
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ListTile(
-                title: Text("Reminder 2"),
-                subtitle: Text("12:00 PM"),
-                trailing: IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () {
-                    Navigator.pushNamed(context, "/addReminder");
-                  },
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ListTile(
-                title: Text("Reminder 3"),
-                subtitle: Text("3:00 PM"),
-                trailing: IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () {
-                    Navigator.pushNamed(context, "/addReminder");
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('Reminder').snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          if (snapshot.data!.docs.isEmpty) {
+            return Center(
+              child: Text('No reminders found.'),
+            );
+          }
+
+          return ListView(
+            children: snapshot.data!.docs.map((DocumentSnapshot document) {
+              Map<String, dynamic> data =
+                  document.data() as Map<String, dynamic>;
+              return ListTile(
+                title: Text('Reminder'),
+                subtitle: Text(
+                    'Test 1: ${data['test1']}, Test 2: ${data['test2']}, Test 3: ${data['test3']}'),
+                trailing: Text('Date: ${data['reminderDateTime'].toDate()}'),
+              );
+            }).toList(),
+          );
+        },
       ),
     );
   }

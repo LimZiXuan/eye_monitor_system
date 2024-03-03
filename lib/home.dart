@@ -4,7 +4,7 @@ import 'package:eye_monitor_system/reminder.dart';
 import 'package:eye_monitor_system/test_history.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; // new
-
+import 'result.dart'; // new
 import 'app_state.dart'; // new
 
 class Home extends StatefulWidget {
@@ -59,7 +59,7 @@ class _HomeState extends State<Home> {
       builder: (context, appState, _) => const HomePage(),
     ),
     Consumer<ApplicationState>(
-      builder: (context, appState, _) => HomePage(),
+      builder: (context, appState, _) => Result(),
     ),
     Consumer<ApplicationState>(
       builder: (context, appState, _) => const AddReminder(),
