@@ -346,11 +346,10 @@ class _RegisterState extends State<Register> {
     CollectionReference ref = FirebaseFirestore.instance.collection('User');
     ref.doc(user!.uid).set({
       'email': emailController.text,
-      'userRole': userRole,
+      // 'userRole': userRole,
       'uid': user.uid,
-      'isAdmin': isAdmin,
+      // 'isAdmin': isAdmin,
       'createdAt': DateTime.now(),
-      'BirdwatchingExperienceLevel': 0,
     });
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => AuthGate()));

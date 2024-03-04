@@ -57,6 +57,9 @@ class _AddReminderState extends State<AddReminder> {
         'test1': test1Checked,
         'test2': test2Checked,
         'test3': test3Checked,
+        'test1Completed': false,
+        'test2Completed': false,
+        'test3Completed': false,
         'reminderDateTime': Timestamp.fromDate(reminderDateTime),
         'uid': FirebaseAuth.instance.currentUser!.uid,
       }).then((_) {

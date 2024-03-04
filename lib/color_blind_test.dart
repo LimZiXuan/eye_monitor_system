@@ -92,14 +92,21 @@ class _ColorBlindTestState extends State<ColorBlindTest> {
             'correctAnswersCount': correctAnswersCount,
             'timestamp': DateTime.now(),
           });
+        } else {
+          // Update the TestHistory subcollection if it exists
+          await testHistoryRef.doc(testHistorySnapshot.docs[0].id).update({
+            'testType': 'Color Blind Test',
+            'correctAnswersCount': correctAnswersCount,
+            'timestamp': DateTime.now(),
+          });
         }
 
-        // Add test data to the TestHistory subcollection
-        await testHistoryRef.add({
-          'testType': 'Color Blind Test',
-          'correctAnswersCount': correctAnswersCount,
-          'timestamp': DateTime.now(),
-        });
+        // // Add test data to the TestHistory subcollection
+        // await testHistoryRef.add({
+        //   'testType': 'Color Blind Test',
+        //   'correctAnswersCount': correctAnswersCount,
+        //   'timestamp': DateTime.now(),
+        // });
 
         // You can repeat the above process to add more types of tests
 
@@ -136,9 +143,11 @@ class _ColorBlindTestState extends State<ColorBlindTest> {
     try {
       User? user = auth.currentUser;
       if (user != null) {
-        await _firestore.collection('User').doc(user.uid).set({
-          'correctAnswersCount': count,
-        }, SetOptions(merge: true));
+        await _firestore.collection('User').doc(user.uid).update(
+          {
+            'correctAnswersCount': count,
+          },
+        );
       }
     } catch (e) {
       print('Error updating correct answers count: $e');
