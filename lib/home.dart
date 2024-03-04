@@ -79,7 +79,8 @@ class _HomeState extends State<Home> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Colors.blue[100],
+        // backgroundColor: Theme.of(context).colorScheme.primary,
         //backgroundColor: Color.fromARGB(255, 226, 208, 154),
         items: const [
           BottomNavigationBarItem(

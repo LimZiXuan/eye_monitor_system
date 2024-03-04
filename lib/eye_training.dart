@@ -1,11 +1,6 @@
+import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
-
-import 'package:flutter/material.dart';
-
-void main() {
-  runApp(EyeTraining());
-}
 
 class EyeTraining extends StatefulWidget {
   const EyeTraining({Key? key}) : super(key: key);
@@ -15,9 +10,6 @@ class EyeTraining extends StatefulWidget {
 }
 
 class _EyeTrainingState extends State<EyeTraining> {
-  bool _showInstruction = true;
-  int _countdown = 3;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,152 +17,119 @@ class _EyeTrainingState extends State<EyeTraining> {
         title: Text("Eye Training"),
         centerTitle: true,
       ),
-      body: _showInstruction ? _instructionPage() : _gamePage(),
+      body: EyeGame(speed: 2), // Adjust speed here
     );
-  }
-
-  Widget _instructionPage() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Instructions:',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-          ),
-          SizedBox(height: 20),
-          Text(
-            'Catch the ball with your eyes!',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16),
-          ),
-          SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              _startCountdown();
-            },
-            child: Text('Start'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _gamePage() {
-    return Stack(
-      children: [
-        GameScreen(),
-        if (_countdown > 0)
-          Center(
-            child: Text(
-              '$_countdown',
-              style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
-            ),
-          ),
-      ],
-    );
-  }
-
-  void _startCountdown() {
-    setState(() {
-      _showInstruction = false;
-    });
-
-    Timer.periodic(Duration(seconds: 1), (timer) {
-      setState(() {
-        if (_countdown > 1) {
-          _countdown--;
-        } else {
-          _countdown = 0;
-          timer.cancel();
-        }
-      });
-    });
   }
 }
 
-class GameScreen extends StatefulWidget {
+class EyeGame extends StatefulWidget {
+  final double speed;
+
+  const EyeGame({Key? key, required this.speed}) : super(key: key);
+
   @override
-  _GameScreenState createState() => _GameScreenState();
+  _EyeGameState createState() => _EyeGameState();
 }
 
-class _GameScreenState extends State<GameScreen> {
+class _EyeGameState extends State<EyeGame> {
+  Timer? _starTimer;
+  Timer? _showTimer;
   double ballX = 0;
   double ballY = 0;
-  double playerX = 0;
-  double screenHeight = 0;
   double screenWidth = 0;
-  Timer? _ballTimer;
-
-  void movePlayer(double dx) {
-    setState(() {
-      playerX = dx;
-    });
-  }
-
-  void dropBall() {
-    setState(() {
-      ballX = Random().nextDouble() * screenWidth;
-      ballY = 0;
-    });
-  }
-
-  void checkCollision() {
-    if ((ballY > screenHeight - 50) &&
-        (ballX >= playerX && ballX <= playerX + 50)) {
-      dropBall();
-    }
-  }
+  double screenHeight = 0;
+  double starX = 0;
+  double starY = 0;
+  bool showStar = false;
 
   @override
   void initState() {
     super.initState();
-    _ballTimer = Timer.periodic(Duration(milliseconds: 10), (timer) {
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
       setState(() {
-        ballY += 5;
-        checkCollision();
+        screenWidth = MediaQuery.of(context).size.width;
+        screenHeight = MediaQuery.of(context).size.height;
+        startGame();
       });
     });
   }
 
+  void startGame() {
+    _starTimer = Timer.periodic(Duration(seconds: 2), (timer) {
+      setState(() {
+        showStar = true;
+        generateStarPosition();
+        _showTimer = Timer(Duration(seconds: 1), () {
+          setState(() {
+            showStar = false;
+          });
+        });
+      });
+    });
+  }
+
+  void generateStarPosition() {
+    setState(() {
+      starX = Random().nextDouble() * screenWidth;
+      starY = Random().nextDouble() * screenHeight;
+    });
+  }
+
+  void onTap(double x, double y) {
+    setState(() {
+      ballX = x - 25; // Adjust for the ball's width
+      ballY = y - 25; // Adjust for the ball's height
+    });
+    checkCollision();
+  }
+
+  void checkCollision() {
+    if ((ballX <= starX + 50 && ballX >= starX - 50) &&
+        (ballY <= starY + 50 && ballY >= starY - 50)) {
+      setState(() {
+        showStar = false;
+      });
+    }
+  }
+
   @override
   void dispose() {
-    _ballTimer?.cancel();
     super.dispose();
+    _starTimer?.cancel(); // Cancel the timer if it is not null
+    _showTimer?.cancel(); // Cancel the timer if it is not null
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onHorizontalDragUpdate: (details) {
-        movePlayer(playerX + details.delta.dx);
+      onPanUpdate: (details) {
+        onTap(details.localPosition.dx, details.localPosition.dy);
       },
       child: Stack(
         children: [
           Container(
-            color: Colors.amber,
-            child: Center(
-              child: Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.red,
-                ),
-                margin: EdgeInsets.only(
-                  top: ballY,
-                  left: ballX,
-                ),
+            color: Colors.black,
+          ),
+          if (showStar)
+            Positioned(
+              left: starX,
+              top: starY,
+              child: Icon(
+                Icons.star,
+                color: Colors.yellow,
+                size: 50,
               ),
             ),
-          ),
           Positioned(
-            left: playerX,
-            bottom: 0,
+            left: ballX,
+            top: ballY,
             child: Container(
               width: 50,
-              height: 20,
-              color: Colors.black87,
+              height: 50,
+              decoration: BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
             ),
           ),
         ],
