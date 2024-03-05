@@ -26,36 +26,37 @@ class Result extends StatelessWidget {
           }
           final data = snapshot.data!.data() as Map<String, dynamic>;
 
-          // Sample table data
-          List<Map<String, dynamic>> tableData = [
-            {'Name': 'John', 'Age': 30},
-            {'Name': 'Alice', 'Age': 25},
-            {'Name': 'Bob', 'Age': 35}
-          ];
-
           return SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: DataTable(
-              columns: <DataColumn>[
-                DataColumn(
-                  label: Text('Test'),
+            child: DataTable(columns: <DataColumn>[
+              DataColumn(
+                label: Text('Test'),
+              ),
+              DataColumn(
+                label: Text('Diagnostic Result'),
+              ),
+            ], rows: [
+              DataRow(
+                cells: <DataCell>[
+                  DataCell(Text('Ishihara Test')),
+                  if (data['correctAnswersCount'] == 4)
+                    DataCell(Text("You Are Not Color Blind"))
+                  else
+                    DataCell(Text("You Are Color Blind"))
+                ],
+              ),
+            ]
+                // rows: data.map((item) {
+                //   return DataRow(
+                //     cells: <DataCell>[
+                //       if (data['correctAnswersCount'] == 4)
+                //         DataCell(Text("You Are Not Color Blind"))
+                //       else
+                //         DataCell(Text("You Are Color Blind"))
+                //     ],
+                //   );
+                // }).toList(),
                 ),
-                DataColumn(
-                  label: Text('Diagnostic Result'),
-                ),
-              ],
-              rows: tableData.map((item) {
-                return DataRow(
-                  cells: <DataCell>[
-                    if (data['correctAnswersCount'] == 4)
-                      DataCell(Text("You Are Not Color Blind"))
-                    else
-                      DataCell(Text(item['Name'])),
-                    DataCell(Text(item['Age'].toString())),
-                  ],
-                );
-              }).toList(),
-            ),
           );
         },
       ),
