@@ -4,7 +4,7 @@ import 'package:eye_monitor_system/reminder.dart';
 import 'package:eye_monitor_system/test_history.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; // new
-import 'result.dart'; // new
+import 'profile.dart'; // new
 import 'app_state.dart'; // new
 
 class Home extends StatefulWidget {
@@ -59,7 +59,7 @@ class _HomeState extends State<Home> {
       builder: (context, appState, _) => const HomePage(),
     ),
     Consumer<ApplicationState>(
-      builder: (context, appState, _) => Result(),
+      builder: (context, appState, _) => TestHistory(),
     ),
     Consumer<ApplicationState>(
       builder: (context, appState, _) => const AddReminder(),
@@ -68,7 +68,7 @@ class _HomeState extends State<Home> {
       builder: (context, appState, _) => const Reminder(),
     ),
     Consumer<ApplicationState>(
-      builder: (context, appState, _) => TestHistory(),
+      builder: (context, appState, _) => Profile(),
     ),
   ];
   @override
@@ -88,8 +88,8 @@ class _HomeState extends State<Home> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart),
-            label: 'Result',
+            icon: Icon(Icons.history),
+            label: 'History',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.add),
@@ -100,8 +100,8 @@ class _HomeState extends State<Home> {
             label: 'Reminder',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: 'History',
+            icon: Icon(Icons.person),
+            label: 'Profile',
           ),
         ],
         currentIndex: _selectedIndex,

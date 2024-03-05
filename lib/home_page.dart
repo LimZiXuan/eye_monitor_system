@@ -44,26 +44,11 @@ class _HomePageState extends State<HomePage> {
                             // Sign out the user and navigate to the authentication screen
                             try {
                               await FirebaseAuth.instance.signOut();
-                              // Navigator.of(context).pushAndRemoveUntil(
-                              //     MaterialPageRoute(
-                              //         builder: (_) => MultiProvider(providers: [
-                              //               ChangeNotifierProvider(
-                              //                   create: (context) =>
-                              //                       ApplicationState()),
-                              //             ], child: AuthGate())),
-                              //     (route) => false);
                               navigatorKey.currentState?.pushAndRemoveUntil(
                                 MaterialPageRoute(
                                     builder: (context) => AuthGate()),
                                 (route) => false,
                               );
-                              //Navigator.of(context).pop();
-                              // Navigator.of(
-                              //   context,
-                              // ).pushAndRemoveUntil(
-                              //     MaterialPageRoute(
-                              //         builder: (context) => AuthGate()),
-                              //     (route) => false);
                             } catch (e) {
                               print('Error signing out: $e');
                               // Handle the error gracefully, e.g., show an error message
@@ -96,67 +81,64 @@ class _HomePageState extends State<HomePage> {
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
-                "Good Day, Would you like to give your eyes your check?",
+                "Good Day, Would you like to give your eyes a check?",
                 style: TextStyle(fontSize: 18),
+                textAlign: TextAlign.justify,
               ),
             ),
           ),
         ),
         const SizedBox(height: 8),
         Container(
-          height: MediaQuery.of(context).size.height * 0.6,
-          width: MediaQuery.of(context).size.width * 0.9,
-          margin: EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            color: Colors.grey[300],
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Column(
-              children: [
-                InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ColorBlindTest()));
-                    },
-                    child: _buildTestItem(
-                      imagePath: 'assets/img/download.png',
-                      text: 'Colour Blind Test',
-                    )),
-                InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => LongShortSightedness()));
-                    },
-                    child: _buildTestItem(
-                      imagePath: 'assets/img/sight.png',
-                      text: 'Long Short Sightedness',
-                    )),
-                InkWell(
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => EyeTraining()));
-                  },
-                  child: _buildTestItem(
-                    imagePath: 'assets/img/eye_training.png',
-                    text: 'Eye Training',
-                  ),
-                )
-              ],
+            height: MediaQuery.of(context).size.height * 0.6,
+            width: MediaQuery.of(context).size.width * 0.9,
+            margin: EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(12),
             ),
-          ),
-        ),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[]),
-        )
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ColorBlindTest()));
+                      },
+                      child: _buildTestItem(
+                        imagePath: 'assets/img/download.png',
+                        text: 'Colour Blind Test',
+                      )),
+                  InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LongShortSightedness()));
+                      },
+                      child: _buildTestItem(
+                        imagePath: 'assets/img/sight.png',
+                        text: 'Long Short Sightedness',
+                      )),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => EyeTraining()));
+                    },
+                    child: _buildTestItem(
+                      imagePath: 'assets/img/eye_training.png',
+                      text: 'Eye Training',
+                    ),
+                  )
+                ],
+              ),
+            )),
       ])),
     );
   }
