@@ -38,14 +38,35 @@ class _ProfileState extends State<Profile> {
   CroppedFile? _croppedFile;
   var isAdmin = false;
   bool _isMounted = false;
-
+  static const String sampleEmail = "tony@starkindustries.com";
   @override
   void initState() {
     super.initState();
     final user = FirebaseAuth.instance.currentUser;
+    final userId = user?.uid;
     _displayName = FirebaseAuth.instance.currentUser?.displayName;
-    print(_displayName);
     _displayNameController.text = _displayName ?? '';
+    FirebaseFirestore.instance
+        .collection('User')
+        .doc(userId)
+        .get()
+        .then((userData) {
+      setState(() {
+        _displayName = userData['userName'];
+        _displayNameController.text = _displayName ?? '';
+        _phone = userData['phoneNumber'];
+        _phoneController.text = _phone ?? '';
+        _gender = userData['gender'];
+        _genderController.text = _gender ?? '';
+        _email = user?.email ?? userData['email'];
+        _emailController.text = _email ?? '';
+        _dob = userData['dob'];
+        _dobController.text = _dob ?? '';
+      });
+    }).catchError((error) {
+      print('Error fetching user data: $error');
+      // Handle error gracefully
+    });
     if (_displayName == null || _displayName!.isEmpty) {
       // User's display name is null, autofocus the TextField
       _isEditing = true;
@@ -164,6 +185,31 @@ class _ProfileState extends State<Profile> {
     }
   }
 
+  void _updateProfile() async {
+    try {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      final userId = currentUser!.uid;
+      final userDocRef =
+          FirebaseFirestore.instance.collection('User').doc(userId);
+
+      // Update the fields in Firestore
+      await userDocRef.update({
+        'userName': _displayNameController.text,
+        'phoneNumber': _phoneController.text,
+        'gender': _gender,
+        'dob': _dobController.text,
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Profile updated successfully')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error updating profile: $e')),
+      );
+    }
+  }
+
   void _deleteAccount() async {
     final user = FirebaseAuth.instance.currentUser;
 
@@ -279,89 +325,121 @@ class _ProfileState extends State<Profile> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                Text("Email: ${FirebaseAuth.instance.currentUser?.email}"),
                 TextField(
                   controller: _displayNameController,
                   decoration: InputDecoration(labelText: 'Display Name'),
                   onChanged: (value) => _displayName = value,
                 ),
-                TextField(
+                TextFormField(
                   controller: _phoneController,
                   decoration: InputDecoration(labelText: 'Phone Number'),
-                  onChanged: (value) => _phone = value,
+                  keyboardType: TextInputType.phone,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter your phone number';
+                    }
+                    return null; // Return null if validation passes
+                  },
                 ),
-                TextField(
-                  controller: _genderController,
+                // TextFormField(
+                //   controller: _emailController,
+                //   decoration: InputDecoration(labelText: 'Email Address'),
+                //   keyboardType: TextInputType.emailAddress,
+                //   validator: (value) {
+                //     if (value!.isEmpty) {
+                //       return 'Please enter your email address';
+                //     }
+                //     if (!RegExp(
+                //             r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b')
+                //         .hasMatch(value)) {
+                //       return 'Please enter a valid email address';
+                //     }
+                //     return null;
+                //   },
+                // ),
+                DropdownButtonFormField<String>(
+                  value: _gender,
+                  onChanged: (newValue) {
+                    setState(() {
+                      _gender = newValue;
+                    });
+                  },
+                  items: ['Male', 'Female', 'Other'].map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
                   decoration: InputDecoration(labelText: 'Gender'),
-                  onChanged: (value) => _gender = value,
                 ),
-                TextField(
-                  controller: _emailController,
-                  decoration: InputDecoration(labelText: 'Email Address'),
-                  onChanged: (value) => _email = value,
-                ),
-                TextField(
+                TextFormField(
                   controller: _dobController,
+                  readOnly: true,
                   decoration: InputDecoration(labelText: 'Date of Birth'),
-                  onChanged: (value) => _dob = value,
+                  onTap: () async {
+                    final DateTime? picked = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(1900),
+                      lastDate: DateTime.now(),
+                    );
+                    if (picked != null) {
+                      setState(() {
+                        _dobController.text =
+                            picked.toString().substring(0, 10);
+                      });
+                    }
+                  },
                 ),
               ],
             ),
           ),
+          Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: ElevatedButton(
+                onPressed: () {
+                  _updateProfile();
+                },
+                child: Text('Save'),
+              )),
           SizedBox(height: 20),
-          Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            ElevatedButton.icon(
-              onPressed: () async {
-                showDialog(
-                  //show a dialog box to confirm sign out
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Sign Out'),
-                    content: const Text('Are you sure you want to sign out?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('Cancel'),
-                      ),
-                      TextButton(
-                        onPressed: () async {
-                          // Sign out the user and navigate to the authentication screen
-                          try {
-                            await FirebaseAuth.instance.signOut();
-                            navigatorKey.currentState?.pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                  builder: (context) => AuthGate()),
-                              (route) => false,
-                            );
-                            Navigator.of(context).pop();
-                            // Navigator.of(
-                            //   context,
-                            // ).pushAndRemoveUntil(
-                            //     MaterialPageRoute(
-                            //         builder: (context) => AuthGate()),
-                            //     (route) => false);
-                          } catch (e) {
-                            print('Error signing out: $e');
-                            // Handle the error gracefully, e.g., show an error message
-                          }
-                        },
-                        child: const Text('Sign Out'),
-                      ),
-                    ],
-                  ),
-                );
-              },
-              icon: Icon(Icons.logout),
-              label: Text('Sign Out'),
-            ),
-            // SizedBox(height: 10),
-            // ElevatedButton.icon(
-            //   onPressed: () {
-            //     _deleteAccount();
-            //   },
-            //   icon: Icon(Icons.delete),
-            //   label: Text('Delete Account'),
-            // ),
-          ]),
+          ElevatedButton.icon(
+            onPressed: () async {
+              showDialog(
+                //show a dialog box to confirm sign out
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Sign Out'),
+                  content: const Text('Are you sure you want to sign out?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        // Sign out the user and navigate to the authentication screen
+                        try {
+                          await FirebaseAuth.instance.signOut();
+                          navigatorKey.currentState?.pushAndRemoveUntil(
+                            MaterialPageRoute(builder: (context) => AuthGate()),
+                            (route) => false,
+                          );
+                        } catch (e) {
+                          print('Error signing out: $e');
+                          // Handle the error gracefully, e.g., show an error message
+                        }
+                      },
+                      child: const Text('Sign Out'),
+                    ),
+                  ],
+                ),
+              );
+            },
+            icon: Icon(Icons.logout),
+            label: Text('Sign Out'),
+          ),
         ])));
   }
 
